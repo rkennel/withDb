@@ -3,6 +3,7 @@ package rkennel.withdb;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.Task;
 import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.TaskAction;
 
 public class WithDBTaskDependencySetup extends DefaultTask {
@@ -32,6 +33,7 @@ public class WithDBTaskDependencySetup extends DefaultTask {
         return false;
     }
 
+    @Internal
     @Override
     public String getName() {
         return WithDBTaskDependencySetup.class.getName();
