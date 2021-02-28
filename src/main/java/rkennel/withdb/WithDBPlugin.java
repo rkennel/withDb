@@ -2,9 +2,7 @@ package rkennel.withdb;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.gradle.api.Task;
 
 public class WithDBPlugin implements Plugin<Project> {
 
@@ -16,6 +14,9 @@ public class WithDBPlugin implements Plugin<Project> {
     private void registerTasks(Project project) {
         for (TaskEnum taskEnum : TaskEnum.values()) {
             project.getTasks().register(taskEnum.task,WithDBTask.class,taskEnum);
+
+            Task newTask = project.getTasks().getByName(taskEnum.task);
+            project.getTasks().getByName("assemble").dependsOn(newTask);
         }
     }
 
