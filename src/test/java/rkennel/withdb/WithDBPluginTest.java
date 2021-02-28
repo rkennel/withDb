@@ -6,9 +6,10 @@ import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -53,7 +54,9 @@ public class WithDBPluginTest {
                 .withPluginClasspath()
                 .build();
 
+        assertThat(result.getTasks().contains(TaskEnum.MYSQL.task));
         assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
+
     }
 
     @Test
@@ -64,6 +67,7 @@ public class WithDBPluginTest {
                 .withArguments(TaskEnum.POSTGRES.task)
                 .withPluginClasspath()
                 .build();
+
 
         assertThat(result.getOutput()).contains("org.postgresql:postgresql");
     }
@@ -77,8 +81,8 @@ public class WithDBPluginTest {
                 .withPluginClasspath()
                 .build();
 
-        assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
-        assertThat(result.getOutput()).doesNotContain("org.postgresql:postgresql");
+        assertThat(result.getTasks().contains(TaskEnum.MYSQL.task));
+        assertThat(result.getTasks().contains(TaskEnum.POSTGRES.task)).isFalse();
     }
 
     @Test
@@ -90,19 +94,20 @@ public class WithDBPluginTest {
                 .withPluginClasspath()
                 .build();
 
-        assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
-        assertThat(result.getOutput()).contains("org.postgresql:postgresql");
+        assertThat(result.getTasks().contains(TaskEnum.MYSQL.task));
+        assertThat(result.getTasks().contains(TaskEnum.POSTGRES.task));
     }
 
     @Test
-    public void runsBeforeBuild() throws IOException {
+    public void runsBeforeBuildAndOnlyIncludesRequestedDrivers() throws IOException {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
                 .withArguments("build",TaskEnum.MYSQL.task)
                 .withPluginClasspath()
                 .build();
 
-        System.out.println(result.getOutput());
+        assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
+        assertThat(result.getOutput()).doesNotContain("org.postgresql:postgresql");
 
     }
 
