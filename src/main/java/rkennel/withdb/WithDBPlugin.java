@@ -3,7 +3,6 @@ package rkennel.withdb;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
-import org.gradle.api.invocation.Gradle;
 
 public class WithDBPlugin implements Plugin<Project> {
 
@@ -16,14 +15,14 @@ public class WithDBPlugin implements Plugin<Project> {
 
         registerSetupClass(project);
 
-        for (TaskEnum taskEnum : TaskEnum.values()) {
+        for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
             project.getTasks().register(taskEnum.task,WithDBTask.class,taskEnum);
 
             dependsOnSetupTask(project, taskEnum);
         }
     }
 
-    private void dependsOnSetupTask(Project project, TaskEnum taskEnum) {
+    private void dependsOnSetupTask(Project project, WithDBTaskEnum taskEnum) {
         Task newTask = project.getTasks().getByName(taskEnum.task);
         newTask.dependsOn(project.getTasks().getByName(WithDBTaskDependencySetup.class.getName()));
     }

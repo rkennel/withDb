@@ -11,7 +11,7 @@ public class WithDBTaskDependencySetup extends DefaultTask {
     public void runTask() {
         DependencyHandler dependencies = this.getProject().getDependencies();
 
-        for (TaskEnum taskEnum : TaskEnum.values()) {
+        for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
             if (inTaskGraph(taskEnum)) {
                 getProject().getTasks().getByName("compileJava").dependsOn(getProject().getTasks().getByName(taskEnum.task));
 
@@ -22,7 +22,7 @@ public class WithDBTaskDependencySetup extends DefaultTask {
         }
     }
 
-    private boolean inTaskGraph(TaskEnum taskEnum) {
+    private boolean inTaskGraph(WithDBTaskEnum taskEnum) {
         for (Task task : getProject().getGradle().getTaskGraph().getAllTasks()) {
             if (taskEnum.task.equals(task.getName())) {
                 return true;

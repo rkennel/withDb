@@ -4,12 +4,17 @@ import org.gradle.internal.impldep.org.junit.rules.TemporaryFolder;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -45,31 +50,24 @@ public class WithDBPluginTest {
         }
     }
 
-    @Test
-    public void mysqlDriver() {
+    @TestFactory
+    Collection<DynamicTest> allDrivers() {
 
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
-                .withArguments(TaskEnum.MYSQL.task)
-                .withPluginClasspath()
-                .build();
+        List<DynamicTest> tests = new LinkedList<>();
+        for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
+            tests.add(DynamicTest.dynamicTest(taskEnum.task, () -> {
+                BuildResult result = GradleRunner.create()
+                        .withProjectDir(testProjectDir.getRoot())
+                        .withArguments(taskEnum.task)
+                        .withPluginClasspath()
+                        .build();
 
-        assertThat(result.getTasks().contains(TaskEnum.MYSQL.task));
-        assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
+                assertThat(result.getTasks().contains(taskEnum.task));
+                assertThat(result.getOutput()).contains(taskEnum.driver);
+            }));
+        }
 
-    }
-
-    @Test
-    public void postgresqlDriver() {
-
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(testProjectDir.getRoot())
-                .withArguments(TaskEnum.POSTGRES.task)
-                .withPluginClasspath()
-                .build();
-
-
-        assertThat(result.getOutput()).contains("org.postgresql:postgresql");
+        return tests;
     }
 
     @Test
@@ -77,12 +75,12 @@ public class WithDBPluginTest {
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments(TaskEnum.MYSQL.task)
+                .withArguments(WithDBTaskEnum.MYSQL.task)
                 .withPluginClasspath()
                 .build();
 
-        assertThat(result.getTasks().contains(TaskEnum.MYSQL.task));
-        assertThat(result.getTasks().contains(TaskEnum.POSTGRES.task)).isFalse();
+        assertThat(result.getTasks().contains(WithDBTaskEnum.MYSQL.task));
+        assertThat(result.getTasks().contains(WithDBTaskEnum.POSTGRES.task)).isFalse();
     }
 
     @Test
@@ -90,19 +88,19 @@ public class WithDBPluginTest {
 
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments(TaskEnum.MYSQL.task, TaskEnum.POSTGRES.task)
+                .withArguments(WithDBTaskEnum.MYSQL.task, WithDBTaskEnum.POSTGRES.task)
                 .withPluginClasspath()
                 .build();
 
-        assertThat(result.getTasks().contains(TaskEnum.MYSQL.task));
-        assertThat(result.getTasks().contains(TaskEnum.POSTGRES.task));
+        assertThat(result.getTasks().contains(WithDBTaskEnum.MYSQL.task));
+        assertThat(result.getTasks().contains(WithDBTaskEnum.POSTGRES.task));
     }
 
     @Test
     public void runsBeforeBuildAndOnlyIncludesRequestedDrivers() throws IOException {
         BuildResult result = GradleRunner.create()
                 .withProjectDir(testProjectDir.getRoot())
-                .withArguments("build",TaskEnum.MYSQL.task)
+                .withArguments("build", WithDBTaskEnum.MYSQL.task)
                 .withPluginClasspath()
                 .build();
 
