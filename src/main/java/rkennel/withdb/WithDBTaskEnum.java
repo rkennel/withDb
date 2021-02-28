@@ -12,7 +12,8 @@ public enum WithDBTaskEnum {
     GOOGLE_MYSQL("withGoogleMySql","com.google.cloud.sql:mysql-socket-factory:1.2.+"),
     GOOGLE_POSTGRES("withGooglePostgress","com.google.cloud.sql:postgres-socket-factory:1.2.+"),
     GOOGLE_SPANNER("withGoogleSpanner","com.google.cloud:google-cloud-spanner:4.0.+"),
-    GOOGLE_BIGQUERY("withGoogleBigQuery","com.google.cloud:google-cloud-bigquery:1.127.5");
+    GOOGLE_BIGQUERY("withGoogleBigQuery","com.google.cloud:google-cloud-bigquery:1.127.5"),
+    H2("withH2","com.h2database:h2:1.4.+");
 
     public final String task;
     public final String driver;

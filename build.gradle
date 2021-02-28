@@ -1,20 +1,29 @@
 plugins {
     id 'java-gradle-plugin'
-    id 'idea'
+    id 'maven-publish'
+    id 'com.gradle.plugin-publish' version '0.13.0'
 }
 
+pluginBundle {
+    website = 'https://github.com/rkennel/withDb'
+    vcsUrl = 'https://github.com/rkennel/withDb.git'
+    tags = ['mysql','postgresql','mssql','oracle','db2','mongodb','sqlite','mariadb','cloudsql','bigquery','spanner']
+}
 
 gradlePlugin {
     plugins {
         simplePlugin {
             id = 'rkennel.withdb'
             implementationClass = 'rkennel.withdb.WithDBPlugin'
+            displayName = 'WithDB'
+            description = 'Add DB JDBC drivers to your gradle runtime dependencies'
         }
     }
 }
 
+
 group = "rkennel.withdb"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenCentral()
