@@ -29,7 +29,20 @@ public class WithDBPlugin implements Plugin<Project> {
 
     private void registerSetupClass(Project project) {
         project.getTasks().register(WithDBTaskDependencySetup.class.getName(),WithDBTaskDependencySetup.class);
-        project.getTasks().getByName("compileJava").dependsOn(project.getTasks().getByName(WithDBTaskDependencySetup.class.getName()));
+        project.getTasks().forEach(task -> {
+            if(notAWithDbTask(task.getName())){
+                task.dependsOn(project.getTasks().getByName(WithDBTaskDependencySetup.class.getName()));
+            }
+        });
+    }
+
+    private boolean notAWithDbTask(String taskName) {
+        for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
+            if(taskName.equals(taskEnum.task)||taskName.equals(WithDBTaskDependencySetup.NAME)){
+                return false;
+            }
+        }
+        return true;
     }
 
 

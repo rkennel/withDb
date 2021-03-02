@@ -8,6 +8,8 @@ import org.gradle.api.tasks.TaskAction;
 
 public class WithDBTaskDependencySetup extends DefaultTask {
 
+    public static final String NAME = WithDBTaskDependencySetup.class.getName();
+
     @TaskAction
     public void runTask() {
         DependencyHandler dependencies = this.getProject().getDependencies();
@@ -36,6 +38,6 @@ public class WithDBTaskDependencySetup extends DefaultTask {
     @Internal
     @Override
     public String getName() {
-        return WithDBTaskDependencySetup.class.getName();
+        return NAME;
     }
 }

@@ -17,6 +17,7 @@ gradlePlugin {
             implementationClass = 'rkennel.withdb.WithDBPlugin'
             displayName = 'WithDB'
             description = 'Add DB JDBC drivers to your gradle runtime dependencies'
+            version = '1.0.1'
         }
     }
 }
