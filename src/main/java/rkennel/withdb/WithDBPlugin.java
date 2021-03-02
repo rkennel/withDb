@@ -1,8 +1,11 @@
 package rkennel.withdb;
 
+import org.gradle.api.Action;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.artifacts.dsl.DependencyHandler;
+import org.gradle.api.execution.TaskExecutionGraph;
 
 public class WithDBPlugin implements Plugin<Project> {
 
@@ -13,37 +16,45 @@ public class WithDBPlugin implements Plugin<Project> {
 
     private void registerTasks(Project project) {
 
-        registerSetupClass(project);
-
         for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
             project.getTasks().register(taskEnum.task,WithDBTask.class,taskEnum);
-
-            dependsOnSetupTask(project, taskEnum);
         }
+
+        registerRuntimeDependencies(project);
     }
 
-    private void dependsOnSetupTask(Project project, WithDBTaskEnum taskEnum) {
-        Task newTask = project.getTasks().getByName(taskEnum.task);
-        newTask.dependsOn(project.getTasks().getByName(WithDBTaskDependencySetup.class.getName()));
+    private void registerRuntimeDependencies(Project project) {
+        project.getGradle().getTaskGraph().whenReady(runtimeDependenciesAction(project));
     }
 
-    private void registerSetupClass(Project project) {
-        project.getTasks().register(WithDBTaskDependencySetup.class.getName(),WithDBTaskDependencySetup.class);
-        project.getTasks().forEach(task -> {
-            if(notAWithDbTask(task.getName())){
-                task.dependsOn(project.getTasks().getByName(WithDBTaskDependencySetup.class.getName()));
+    private Action<TaskExecutionGraph> runtimeDependenciesAction(Project project) {
+        return new Action<TaskExecutionGraph>() {
+            @Override
+            public void execute(TaskExecutionGraph taskExecutionGraph) {
+                DependencyHandler dependencies = project.getDependencies();
+
+                for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
+                    if (inTaskGraph(project, taskEnum)) {
+                        String driver = taskEnum.driver;
+                        dependencies.add("runtimeOnly", driver);
+                        System.out.println(String.format("%s runtime dependency added", driver));
+                    }
+                }
             }
-        });
-    }
 
-    private boolean notAWithDbTask(String taskName) {
-        for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
-            if(taskName.equals(taskEnum.task)||taskName.equals(WithDBTaskDependencySetup.NAME)){
+            private boolean inTaskGraph(Project project, WithDBTaskEnum taskEnum) {
+                for (Task task : project.getGradle().getTaskGraph().getAllTasks()) {
+                    if (taskEnum.task.equals(task.getName())) {
+                        return true;
+                    }
+                }
+
                 return false;
             }
-        }
-        return true;
+        };
     }
+
+
 
 
 }

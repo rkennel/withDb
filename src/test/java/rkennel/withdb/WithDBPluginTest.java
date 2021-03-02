@@ -64,6 +64,7 @@ public class WithDBPluginTest {
 
                 assertThat(result.getTasks().contains(taskEnum.task));
                 assertThat(result.getOutput()).contains(taskEnum.driver);
+                System.out.println(result.getOutput());
             }));
         }
 
@@ -104,9 +105,10 @@ public class WithDBPluginTest {
                 .withPluginClasspath()
                 .build();
 
+        System.out.println(result.getOutput());
+
         assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
         assertThat(result.getOutput()).doesNotContain("org.postgresql:postgresql");
-
     }
 
 
