@@ -29,6 +29,6 @@ public class WithDBTask extends DefaultTask {
     @Input
     @Override
     public String getDescription() {
-        return "adds runtime dependencies for a " + this.taskEnum.task + " database";
+        return "adds runtime dependencies for a " + this.taskEnum.databaseName + " database";
     }
 }
