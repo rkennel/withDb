@@ -37,6 +37,6 @@ Note: order of gradle tasks does not matter.
 - Oracle - withOracle
 - DB2 -withDb2
 - Google Cloud SQL (MySQL) - withGoogleMySql
-- Google Cloud SQL (Postgres) - withGooglePostgress
+- Google Cloud SQL (Postgres) - withGooglePostgres
 - Google Spanner - withGoogleSpanner
 - Google BigQuery - withGoogleBigQuery
