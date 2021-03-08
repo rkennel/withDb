@@ -63,9 +63,12 @@ public class WithDBPluginTest {
                         .build();
 
                 assertThat(result.getTasks().contains(taskEnum.task));
-                assertThat(result.getOutput()).contains(taskEnum.driver);
+                for(String driver:taskEnum.drivers){
+                    assertThat(result.getOutput()).contains(taskEnum.drivers);
+                }
                 System.out.println(result.getOutput());
             }));
+
         }
 
         return tests;
@@ -109,6 +112,20 @@ public class WithDBPluginTest {
 
         assertThat(result.getOutput()).contains("mysql:mysql-connector-java");
         assertThat(result.getOutput()).doesNotContain("org.postgresql:postgresql");
+    }
+
+    @Test
+    public void includesAllDriversRequired() {
+        BuildResult result = GradleRunner.create()
+                .withProjectDir(testProjectDir.getRoot())
+                .withArguments("build", WithDBTaskEnum.GOOGLE_POSTGRES.task)
+                .withPluginClasspath()
+                .build();
+
+        System.out.println(result.getOutput());
+
+        assertThat(result.getOutput()).contains("com.google.cloud.sql:postgres-socket-factory:1.2.+");
+        assertThat(result.getOutput()).contains("org.postgresql:postgresql");
     }
 
 

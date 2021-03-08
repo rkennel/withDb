@@ -17,7 +17,7 @@ public class WithDBPlugin implements Plugin<Project> {
     private void registerTasks(Project project) {
 
         for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
-            project.getTasks().register(taskEnum.task,WithDBTask.class,taskEnum);
+            project.getTasks().register(taskEnum.task, WithDBTask.class, taskEnum);
         }
 
         registerRuntimeDependencies(project);
@@ -35,9 +35,11 @@ public class WithDBPlugin implements Plugin<Project> {
 
                 for (WithDBTaskEnum taskEnum : WithDBTaskEnum.values()) {
                     if (inTaskGraph(project, taskEnum)) {
-                        String driver = taskEnum.driver;
-                        dependencies.add("runtimeOnly", driver);
-                        System.out.println(String.format("%s runtime dependency added", driver));
+                        String[] drivers = taskEnum.drivers;
+                        for (String driver : drivers) {
+                            dependencies.add("runtimeOnly", driver);
+                            System.out.println(String.format("%s runtime dependency added", driver));
+                        }
                     }
                 }
             }
@@ -53,8 +55,6 @@ public class WithDBPlugin implements Plugin<Project> {
             }
         };
     }
-
-
 
 
 }
